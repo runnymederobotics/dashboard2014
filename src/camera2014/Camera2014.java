@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package camera2013;
+package camera2014;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -16,7 +16,7 @@ import javax.swing.JApplet;
  *
  * @author 1310
  */
-public class Camera2013 extends JApplet implements Runnable {
+public class Camera2014 extends JApplet implements Runnable {
 
     public static final long FPS = 25;
     public static final Color redColor = new Color(200, 70, 20), blueColor = new Color(20, 70, 200);
