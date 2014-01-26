@@ -29,7 +29,7 @@ public class Camera2014 extends JApplet implements Runnable {
     public void init() {
         this.setSize(680, 240);
 
-        add(new CustomPanel());
+        add(new Camera2014.CustomPanel());
 
         (new Thread(this)).start();
     }
