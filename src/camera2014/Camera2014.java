@@ -21,6 +21,8 @@ public class Camera2014 extends JApplet implements Runnable {
 
     public static final long FPS = 25;
     BufferedImage originalImage, filteredImage;
+    BallFinder redBall = new BallFinder(true);
+    BallFinder blueBall = new BallFinder(false);
     int width, height;
     int xRed, yRed, radiusRed;
     int xBlue, yBlue, radiusBlue;
@@ -70,6 +72,12 @@ public class Camera2014 extends JApplet implements Runnable {
                     width = originalImage.getWidth();
                     height = originalImage.getHeight();
 
+                    redBall.setImageSize(width, height);
+                    blueBall.setImageSize(width, height);
+                    
+                    redBall.reset();
+                    blueBall.reset();
+
                     //Get the pixel data from the image
                     int[] pixels = originalImage.getRGB(0, 0, width, height, null, 0, width);
                     //Copy the pixel data so we can use it to make a filtered image
@@ -79,9 +87,6 @@ public class Camera2014 extends JApplet implements Runnable {
                     xRed = 0;
                     yRed = 0;
                     radiusRed = 0;
-
-                    BallFinder redBall = new BallFinder(width, height, true);
-                    BallFinder blueBall = new BallFinder(width, height, false);
 
                     //Apply threshold
                     for (int i = 0; i < pixels.length; i++) {
@@ -103,7 +108,7 @@ public class Camera2014 extends JApplet implements Runnable {
                     xRed = redBall.getX();
                     yRed = redBall.getY();
                     radiusRed = redBall.getRadius();
-                    
+
                     //Record the position and radius of the red ball
                     xBlue = blueBall.getX();
                     yBlue = blueBall.getY();
@@ -127,36 +132,43 @@ public class Camera2014 extends JApplet implements Runnable {
 
 class BallFinder {
 
-    public static final Color redColor = new Color(190, 20, 10)/*new Color(200, 70, 20)*/, blueColor = new Color(50, 200, 100);
+    public static final Color redColor = new Color(190, 60, 10)/*new Color(200, 70, 20)*/, blueColor = new Color(10, 100, 190);
     boolean colour;
     int imageWidth, imageHeight;
     int xLongest, yLongest;
-    int longestHorizontal, longestVertical;
+    //int longestHorizontal, longestVertical;
+    int longestRadius;
     int xFinishLast, yLast;
 
-    public BallFinder(int imageWidth, int imageHeight, boolean colour) {
+    public BallFinder(boolean colour) {
         this.colour = colour;
+
+        reset();
+    }
+
+    public void setImageSize(int imageWidth, int imageHeight) {
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
-
+    }
+    
+    public void reset() {
         xLongest = 0;
         yLongest = 0;
-        longestHorizontal = 0;
-        longestVertical = 0;
+        longestRadius = 0;
         xFinishLast = 0;
         yLast = 0;
     }
-    
+
     public int getX() {
         return xLongest;
     }
-    
+
     public int getY() {
         return yLongest;
     }
-    
+
     public int getRadius() {
-        return Math.min(longestHorizontal, longestVertical) / 2;
+        return longestRadius;//Math.min(longestHorizontal, longestVertical) / 2;
     }
 
     //colour -> red, !colour -> blue
@@ -164,7 +176,7 @@ class BallFinder {
         if (checkThreshold(colour, rgb)) {
             //If we're in a different "chunk" of this horizontal slice, or if we've moved to the next line
             if (x > xFinishLast || y > yLast) {
-                int xFinish, yFinish;
+                int xFinish, yFinish, yStart;
                 //Start at the first x value of the current "chunk" of this horizontal slice
                 //Walk through this chunk until we find a pixel outside of our threshold
                 for (xFinish = x; xFinish < imageWidth - 1 && checkThreshold(colour, pixels[y * imageWidth + xFinish]); xFinish++) {
@@ -172,7 +184,7 @@ class BallFinder {
 
                 //We now have the left and right endpoints of this horizontal chunk
 
-                //Find the midpoint of the chunk
+                //Find the midpoint of the horizontal chunk
                 int xMid = (x + xFinish) / 2;
 
                 //Start at the current y value, and walk down the image until we get outside the threshold
@@ -180,25 +192,29 @@ class BallFinder {
                 for (yFinish = y; yFinish < imageHeight - 1 && checkThreshold(colour, pixels[yFinish * imageWidth + xMid]); yFinish++) {
                 }
 
-                //Find the midpoint of the vertical chunk
-                int yMid = (y + yFinish) / 2;
-
-                //Now find the height of each horizontal/vertical chunk
-                int xLength = xFinish - x, yLength = yFinish - y;
-
-                //filteredPixels[y * width + x] = 0xFFFF00;
-                //filteredPixels[yFinish * imageWidth + xMid] = 0xFFFF00;
-
-                //If we've found a new longest horizontal chunk then record it and its midpoint
-                if (xLength > longestHorizontal) {
-                    longestHorizontal = xLength;
-                    xLongest = xMid;
+                //Start at the current y value, and walk up the image until we get outside the threshold
+                //The x-value we're walking at is the midpoint we found earlier
+                for (yStart = y; yStart >= 0 && checkThreshold(colour, pixels[yStart * imageWidth + xMid]); yStart--) {
                 }
 
+                //Find the diameter of the horiztonal chunk
+                int xLength = Math.abs(xFinish - x);
+                //Find the length to the bottom and top of the ball
+                int yLengthDown = Math.abs(yFinish - y), yLengthUp = Math.abs(y - yStart);
+
+                //Take the smaller vertical length
+                int yLength = Math.min(yLengthDown, yLengthUp);//yLengthDown + yLengthUp) / 2;
+
+                //Take the average of the x-radius and y-radius
+                //xLength is the diameter so divide it by 2
+                int currentRadius = (xLength / 2 + yLength) / 2;
+
+                //If we've found a new longest horizontal chunk then record it and its midpoint
                 //If we've found a new longest vertical chunk then record it and its midpoint
-                if (yLength > longestVertical) {
-                    longestVertical = yLength;
-                    yLongest = yMid;
+                if (currentRadius > longestRadius) {
+                    xLongest = xMid; //x is at the left of the ball, xMid is in the middle
+                    yLongest = y; //y is in the middle of the ball
+                    longestRadius = currentRadius;
                 }
 
                 //Record where the endpoint of the current chunk is
