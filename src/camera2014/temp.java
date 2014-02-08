@@ -94,3 +94,23 @@ public class temp {
      * 
      */
 }
+
+
+/*
+ * 
+ * int x = ballFinder.getX(), y = ballFinder.getY(), radius = ballFinder.getRadius();
+        
+        //(FIELD_OF_VIEW / 2) / (width / 2) = angleToCenter / distanceToCenter
+
+        int deltaX = x - width / 2, deltaY = y - height / 2;
+        
+        double angleToBall = FIELD_OF_VIEW / ((double) width) * ((double) deltaX);
+        
+        double distanceInPixels = Math.abs(deltaX / Math.tan(angleToBall * Math.PI / 180));
+        
+        final double INCHES_PER_PIXEL = 12.0 / ((double) radius);
+        
+        double distanceInInches = distanceInPixels * INCHES_PER_PIXEL;
+        
+        return distanceInInches;
+ */

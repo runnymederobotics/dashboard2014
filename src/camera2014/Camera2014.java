@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 public class Camera2014 extends JApplet implements Runnable {
 
     public static final long FPS = 25;
+    public static final double FIELD_OF_VIEW = 55.0; //55.0 degrees
     BufferedImage originalImage, filteredImage;
     BallFinder redBall = new BallFinder(true);
     BallFinder blueBall = new BallFinder(false);
@@ -74,7 +75,7 @@ public class Camera2014 extends JApplet implements Runnable {
 
                     redBall.setImageSize(width, height);
                     blueBall.setImageSize(width, height);
-                    
+
                     redBall.reset();
                     blueBall.reset();
 
@@ -124,9 +125,30 @@ public class Camera2014 extends JApplet implements Runnable {
                     ex.printStackTrace();
                 }
             }
+            try {
+                System.out.println(redBall.getRadius() + " " + getDistance(redBall));
+            } catch (Exception e) {
+            }
             //long timeTaken = (System.currentTimeMillis() - now);
             //System.out.println("Algorithm time: " + timeTaken + " FPS: " + (1000 / timeTaken));
         }
+    }
+
+    private double getDistance(BallFinder ballFinder) {
+        int x = ballFinder.getX(), y = ballFinder.getY(), radius = ballFinder.getRadius();
+
+        //Find the distance of the ball from the center of the image
+        double deltaX = x - width / 2;
+        //Approximate the angle from the middle of the image to the ball
+        double angleToBall = FIELD_OF_VIEW / width * deltaX;
+        //Use trig to find the distance from camera to ball, in pixels
+        double distanceInPixels = deltaX / (Math.tan(Math.toRadians(angleToBall)));
+        //Find ratio of inches to pixels
+        final double INCHES_PER_PIXEL = 12.0 / radius;
+        //Convert pixels to inches
+        double distanceInInches = distanceInPixels * INCHES_PER_PIXEL;
+
+        return distanceInInches;
     }
 }
 
@@ -150,7 +172,7 @@ class BallFinder {
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
     }
-    
+
     public void reset() {
         xLongest = 0;
         yLongest = 0;
@@ -248,5 +270,8 @@ class BallFinder {
     private boolean checkBlueThreshold(int rgb) {
         int r = rgb >> 16 & 0xFF, g = rgb >> 8 & 0xFF, b = rgb & 0xFF;
         return r < blueColor.getRed() && g < blueColor.getGreen() && b > blueColor.getBlue();
+    }
+
+    public void distanceMeasure() {
     }
 }
