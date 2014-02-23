@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jnlp href="launch.jnlp" spec="1.0+">
+    <information>
+        <title>dashboard2014</title>
+        <vendor>1310</vendor>
+        <homepage href=""/>
+        <description>dashboard2014</description>
+        <description kind="short">dashboard2014</description>
+    </information>
+    <update check="always"/>
+    <security>
+<all-permissions/>
+</security>
+    <resources>
+        <j2se java-vm-args="-Djava.security.policy=applet.policy" version="1.7+"/>
+        <jar href="dashboard2014.jar" main="true"/>
+    </resources>
+    <application-desc main-class="camera2013.Camera2013">
+    </application-desc>
+</jnlp>
