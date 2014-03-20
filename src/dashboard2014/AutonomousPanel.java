@@ -18,14 +18,21 @@ public class AutonomousPanel extends JPanel {
         radioGroup = new ButtonGroup();
 
         CustomCheckbox oneBall = new CustomCheckbox("OneBall", false);
+        CustomCheckbox lowGoal = new CustomCheckbox("LowGoal", false);
+        CustomCheckbox twoBall = new CustomCheckbox("TwoBall", false);
         CustomCheckbox twoBallDrag = new CustomCheckbox("TwoBallDrag", false);
 
+
         radioGroup.add(oneBall);
+        radioGroup.add(lowGoal);
+        radioGroup.add(twoBall);
         radioGroup.add(twoBallDrag);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(oneBall);
+        add(lowGoal);
+        add(twoBall);
         add(twoBallDrag);
     }
 
