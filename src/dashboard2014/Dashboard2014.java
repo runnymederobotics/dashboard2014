@@ -8,7 +8,7 @@ import javax.swing.JApplet;
 
 public class Dashboard2014 extends JApplet implements Runnable {
 
-    public static final String host = "10.13.11.2";
+    public static final String host = "10.13.10.2";
     public static final int port = 8000;
     CameraPanel cameraPanel;
     AutonomousPanel autonomousPanel;
