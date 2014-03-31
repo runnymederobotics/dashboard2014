@@ -18,24 +18,30 @@ public class AutonomousPanel extends JPanel {
         radioGroup = new ButtonGroup();
 
         CustomCheckbox oneBall = new CustomCheckbox("OneBall", false);
+        CustomCheckbox oneBallDriveShot = new CustomCheckbox("OneBallDriveShot", false);
         CustomCheckbox lowGoal = new CustomCheckbox("LowGoal", false);
         CustomCheckbox twoBall = new CustomCheckbox("TwoBall", false);
         CustomCheckbox twoBallDrag = new CustomCheckbox("TwoBallDrag", false);
         CustomCheckbox twoBallDragDriveShot = new CustomCheckbox("TwoBallDragDriveShot", false);
+        CustomCheckbox twoBallDragDriveShotExtraDistance = new CustomCheckbox("TwoBallDragDriveShotExtraDistance", false);
 
         radioGroup.add(oneBall);
+        radioGroup.add(oneBallDriveShot);
         radioGroup.add(lowGoal);
         radioGroup.add(twoBall);
         radioGroup.add(twoBallDrag);
         radioGroup.add(twoBallDragDriveShot);
+        radioGroup.add(twoBallDragDriveShotExtraDistance);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(oneBall);
+        add(oneBallDriveShot);
         add(lowGoal);
         add(twoBall);
         add(twoBallDrag);
         add(twoBallDragDriveShot);
+        add(twoBallDragDriveShotExtraDistance);
     }
 
     class CustomCheckbox extends JCheckBox implements ItemListener {
